@@ -8,127 +8,64 @@ import { commonError } from '../utils/RequestUtil'
 import { AxiosPromise } from 'axios'
 
 class GeminiChannelRequest {
-  static GEMINI_TOKEN = ''
+    static GEMINI_API_KEY = ''   // 這裡填Gemini Api Key
+    static GEMINI_SYSTEM_PROMPT = `
+    你是一個專業的程式開發文檔閱讀助手，主要負責將User輸入的文字片段翻譯與總結，儘量使用清晰明確且簡潔的中文解釋其中複雜的術語貨可能的困難點
+    如果User輸入是程式碼片段，直接解釋其中的含義與較複雜的語法
+    請用純文本回覆，不需使用Markdown等標記語言
+    以下是User的輸入：
+    `
 
-  /**
-   * 获取Token
-   */
-  static getToken = (): Promise<string> => {
-    return request({
-      baseURL: 'https://edge.microsoft.com/',
-      url: 'translate/auth',
-      method: HttpMethodType.GET
-    })
-  }
-
-  /**
-   * 刷新Token
-   */
-  static refreshToken = async (): Promise<void> => {
-    window.api.logInfoEvent('[Gemini获取Token事件] - 开始检测token ')
-    if (isNull(GeminiChannelRequest.GEMINI_TOKEN)) {
-      window.api.logInfoEvent('[Gemini获取Token事件] - Token不存在，开始初始化 ')
-      // 不存在Token时进行获取
-      await GeminiChannelRequest.getToken().then((token) => {
-        window.api.logInfoEvent('[Gemini获取Token事件] - Token获取成功：', token)
-        GeminiChannelRequest.GEMINI_TOKEN = token
-      })
-      return
-    }
-    // token存在则进行校验当前token有效期是否小于或等于一分钟 如果满足这个条件则刷新Token
-    const tokenInfo = JSON.parse(window.atob(GeminiChannelRequest.GEMINI_TOKEN.split('.')[1]))
-    // 待校验的时间戳，秒级别
-    const timestamp = tokenInfo['exp']
-    // 当前时间的时间戳，转换为秒级别
-    const currentTime = Math.floor(Date.now() / 1000)
-    // 时间差，单位：秒
-    const timeDifference = timestamp - currentTime
-    if (timeDifference <= 60) {
-      window.api.logInfoEvent('[Gemini获取Token事件] - Token已失效，开始重新获取 ')
-      // 剩余时间小于或等于一分钟 重新更新Token
-      await GeminiChannelRequest.getToken()
-        .then((token) => {
-          window.api.logInfoEvent('[Gemini获取Token事件] - Token获取成功：', token)
-          GeminiChannelRequest.GEMINI_TOKEN = token
-        })
-        .catch((err) => {
-          window.api.logInfoEvent('[Gemini获取Token事件] - 异常：', err)
+    /**
+     * 翻译
+     *
+     * @param info 翻译信息
+     */
+    static apiTranslateByGeminiRequest = async (info): Promise<AxiosPromise> => {
+        if (info.languageType === 'auto') {
+            info.languageType = ''
+        }
+        return request({
+            baseURL: 'https://generativelanguage.googleapis.com/',
+            url: 'v1beta/models/gemini-2.0-flash:generateContent',
+            method: HttpMethodType.POST,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            params: {
+                key: GeminiChannelRequest.GEMINI_API_KEY
+            },
+            data: {
+                contents: [
+                    {
+                        parts: [
+                            {
+                                text: GeminiChannelRequest.GEMINI_SYSTEM_PROMPT + info.translateContent // 這裡要是一段字串
+                            }
+                        ]
+                    }
+                ]
+            }
         })
     }
-  }
 
-  /**
-   * 翻译
-   *
-   * @param info 翻译信息
-   */
-  static apiTranslateByGeminiRequest = async (info): Promise<AxiosPromise> => {
-    if (info.languageType === 'auto') {
-      info.languageType = ''
+    /**
+     * Bing翻译
+     *
+     * @param info 翻译信息
+     */
+    static apiTranslateByGemini = (info): void => {
+        GeminiChannelRequest.apiTranslateByGeminiRequest(info).then(
+            (data) => {
+                window.api['agentApiTranslateCallback'](R.okD(new AgentTranslateCallbackVo(info, data)))
+            },
+            (err) => {
+                window.api['agentApiTranslateCallback'](
+                    R.errorD(new AgentTranslateCallbackVo(info, commonError(TranslateServiceEnum.GEMINI, err)))
+                )
+            }
+        )
     }
-    await GeminiChannelRequest.refreshToken()
-    return request({
-      baseURL: 'https://api-edge.cognitive.microsofttranslator.com/',
-      url: 'translate',
-      method: HttpMethodType.POST,
-      headers: {
-        authorization: 'Bearer ' + GeminiChannelRequest.GEMINI_TOKEN
-      },
-      params: {
-        from: info.languageType,
-        to: info.languageResultType,
-        'api-version': '3.0',
-        includeSentenceLength: true
-      },
-      data: [{ Text: info.translateContent }]
-    })
-  }
-
-  /**
-   * Bing翻译
-   *
-   * @param info 翻译信息
-   */
-  static apiTranslateByGemini = (info): void => {
-    GeminiChannelRequest.apiTranslateByGeminiRequest(info).then(
-      (data) => {
-        window.api['agentApiTranslateCallback'](R.okD(new AgentTranslateCallbackVo(info, data)))
-      },
-      (err) => {
-        window.api['agentApiTranslateCallback'](
-          R.errorD(new AgentTranslateCallbackVo(info, commonError(TranslateServiceEnum.GEMINI, err)))
-        )
-      }
-    )
-  }
-
-  /**
-   * 字典翻译
-   *
-   * @param info 翻译信息
-   */
-  static apiTranslateByBingDict = (info): void => {
-    // 这里调用bing的翻译接口进行查询结果 因为bing字典有些词或句子查不出
-    // 这里作补充作用
-    GeminiChannelRequest.apiTranslateByGeminiRequest(info)
-      .then((bingRes) => {
-        window.api.logInfoEvent('[Bing翻译事件] - 响应报文：', JSON.stringify(bingRes))
-        window.api['agentApiTranslateCallback'](
-          R.okD(
-            new AgentTranslateCallbackVo(info, {
-              text: bingRes[0]['translations'][0]['text'],
-              ...info.dictResponse
-            })
-          )
-        )
-      })
-      .catch((err) => {
-        window.api.logInfoEvent('[Bing翻译事件] - 异常：', err)
-        window.api['agentApiTranslateCallback'](
-          R.errorD(new AgentTranslateCallbackVo(info, commonError('Bing翻译事件', err)))
-        )
-      })
-  }
 }
 
 export { GeminiChannelRequest }
