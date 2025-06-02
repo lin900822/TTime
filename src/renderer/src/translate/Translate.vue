@@ -100,6 +100,10 @@ if (isNull(cacheGet('translateServiceMap'))) {
     const niuTransBuiltInService = buildTranslateService(TranslateServiceEnum.NIU_TRANS_BUILT_IN)
     map.set(niuTransBuiltInService.id, niuTransBuiltInService)
     setTranslateServiceMap(map)
+
+    const geminiBuiltInService = buildTranslateService(TranslateServiceEnum.GEMINI)
+    map.set(geminiBuiltInService.id, geminiBuiltInService)
+    setTranslateServiceMap(map)
   }
 }
 

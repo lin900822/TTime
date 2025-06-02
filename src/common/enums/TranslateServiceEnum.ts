@@ -107,6 +107,7 @@ class TranslateServiceEnum {
    */
   static EC_DICT = 'EcDict'
 
+  static GEMINI = 'Gemini'
 }
 
 export default TranslateServiceEnum

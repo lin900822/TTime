@@ -5,6 +5,7 @@ import { DeepLChannelRequest } from './DeepLChannelRequest'
 import { AzureOpenAIChannelRequest } from './AzureOpenAIChannelRequest'
 import { BaiduChannelRequest } from './BaiduChannelRequest'
 import { TTimeAIChannelRequest } from './TTimeAIChannelRequest'
+import { GeminiChannelRequest } from './GeminiChannelRequest'
 
 class ChannelRequest {
   /**
@@ -103,6 +104,15 @@ class ChannelRequest {
    */
   static baiduimageOcr = (info): void => {
     BaiduChannelRequest.apiOcrImg(info)
+  }
+
+  /**
+   * Gemini
+   *
+   * @param info 翻译信息
+   */
+  static geminiTranslate = (info): void => {
+    GeminiChannelRequest.apiTranslateByGemini(info)
   }
 }
 
