@@ -40,6 +40,8 @@ import { YesNoEnum } from '../../../common/enums/YesNoEnum'
 
 initTheme()
 
+window.api.logLearnEvent('Translate.vue setup')
+
 // 翻译输入组件
 const translateInput = ref('')
 const translatedResultInput = ref('')
@@ -62,6 +64,7 @@ window.api.clearAllTranslateContentEvent(() => {
 
 // 输入翻译触发的窗口显示事件
 window.api.winShowByInputEvent(() => {
+  window.api.logLearnEvent('Translate.vue winShowByInputEvent')
   nextTick(() => {
     // 当输入翻译触发显示窗口时 并且用户没有进行任何操作时
     // 会导致窗口大小一直是最大的 所以这里获取页面高度更新窗口大小
@@ -129,6 +132,7 @@ window.api.showMsgEvent((type, msg) => {
     ElMessageExtend.errorInOptions(msg, { duration: 5 * 1000 })
   }
 })
+
 </script>
 
 <style lang='scss' scoped>

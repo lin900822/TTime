@@ -8,6 +8,14 @@ const logInfoEvent = (...text): void => {
 }
 
 /**
+ * 日志 - Learn级别
+ */
+const logLearnEvent = (...text): void => {
+  const taggedText = [`[Learn]`, ...text]
+  ipcRenderer.invoke('log-info-event', ...taggedText)
+}
+
+/**
  * 日志 - error级别
  */
 const logErrorEvent = (...text): void => {
@@ -119,6 +127,7 @@ const logoutEvent = (): void => {
 
 export default {
   logInfoEvent,
+  logLearnEvent,
   logErrorEvent,
   getSystemTypeEvent,
   openSetPageEvent,

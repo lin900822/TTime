@@ -11,6 +11,7 @@ declare global {
     alwaysOnTopEvent
     windowHeightChangeMaxEvent
     logInfoEvent
+    logLearnEvent
     logErrorEvent
     screenshotEndNotifyEvent
     winShowEvent

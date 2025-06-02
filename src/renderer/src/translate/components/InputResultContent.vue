@@ -27,6 +27,8 @@ const initTranslateServiceMap = (): void => {
   channelRefs.value = []
   // 获取缓存中的翻译服务list
   translateServiceMap.value = getTranslateServiceMapByUse()
+
+  window.api.logLearnEvent('Translate.vue initTranslateServiceMap')
 }
 // 加载翻译服务
 initTranslateServiceMap()
@@ -37,6 +39,8 @@ initTranslateServiceMap()
 window.api.updateTranslateServiceEvent(() => {
   // 加载翻译服务
   initTranslateServiceMap()
+
+  window.api.logLearnEvent('Translate.vue updateTranslateServiceEvent')
 })
 
 /**
