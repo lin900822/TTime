@@ -331,6 +331,9 @@ const deleteTranslateService = (): void => {
  */
 const translateServiceCheckAndSave = (): void => {
   const value = translateServiceThis.value
+
+  window.api.logLearnEvent('translateServiceCheckAndSave')
+
   if (
     (isNull(value.appId) &&
       !TranslateServiceBuilder.getServiceConfigInfo(value.type).isOneAppKey) ||

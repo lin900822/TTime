@@ -1,9 +1,11 @@
 export default {
-  name: 'Gemini(内置)',
+  name: 'Gemini API',
   // 是否需要秘钥
-  isKey: false,
+  isKey: true,
   // 是否单秘钥
-  isOneAppKey: false,
+  isOneAppKey: true,
+  // 是否不需要驗證AppKey
+  isNotNeedCheck: true,
   // 翻译语言
   languageList: [
     {

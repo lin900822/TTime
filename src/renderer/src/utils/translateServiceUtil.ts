@@ -98,7 +98,9 @@ export const buildTranslateService = (type: any): {} => {
     // 是否需要秘钥
     isKey: boolean
     // 是否单秘钥
-    isOneAppKey: boolean
+    isOneAppKey: boolean,
+    // 是否不需要驗證AppKey
+    isNotNeedCheck: boolean,
     // 构建时默认信息
     defaultInfo: object
     // 翻译语言
@@ -193,6 +195,8 @@ export class TranslateServiceBuilder {
     isKey: boolean
     // 是否单秘钥
     isOneAppKey: boolean
+    // 是否不需要驗證AppKey
+    isNotNeedCheck: boolean
     // 构建时默认信息
     defaultInfo: object
     // 翻译语言

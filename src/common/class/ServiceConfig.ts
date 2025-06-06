@@ -41,6 +41,11 @@ class ServiceConfig {
   appKey: string
 
   /**
+   * 
+   */
+  isNotNeedCheck: boolean
+
+  /**
    * 验证状态
    */
   checkStatus: boolean
@@ -54,6 +59,8 @@ class ServiceConfig {
     translateService.useStatus = true
     translateService.isBuiltIn = true
     translateService.checkStatus = true
+    translateService.isNotNeedCheck = true
+
     return {
       ...translateService,
       ...info
