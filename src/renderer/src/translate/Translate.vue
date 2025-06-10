@@ -104,6 +104,10 @@ if (isNull(cacheGet('translateServiceMap'))) {
     const geminiBuiltInService = buildTranslateService(TranslateServiceEnum.GEMINI)
     map.set(geminiBuiltInService.id, geminiBuiltInService)
     setTranslateServiceMap(map)
+
+    const perplexityBuiltInService = buildTranslateService(TranslateServiceEnum.PERPLEXITY)
+    map.set(perplexityBuiltInService.id, perplexityBuiltInService)
+    setTranslateServiceMap(map)
   }
 }
 

@@ -108,6 +108,8 @@ class TranslateServiceEnum {
   static EC_DICT = 'EcDict'
 
   static GEMINI = 'Gemini'
+
+  static PERPLEXITY = 'Perplexity'
 }
 
 export default TranslateServiceEnum

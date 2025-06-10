@@ -6,6 +6,7 @@ import { AzureOpenAIChannelRequest } from './AzureOpenAIChannelRequest'
 import { BaiduChannelRequest } from './BaiduChannelRequest'
 import { TTimeAIChannelRequest } from './TTimeAIChannelRequest'
 import { GeminiChannelRequest } from './GeminiChannelRequest'
+import { PerplexityChannelRequest } from './PerplexityChannelRequest'
 
 class ChannelRequest {
   /**
@@ -113,6 +114,15 @@ class ChannelRequest {
    */
   static geminiTranslate = (info): void => {
     GeminiChannelRequest.apiTranslateByGemini(info)
+  }
+
+   /**
+   * Gemini
+   *
+   * @param info 翻译信息
+   */
+  static perplexityTranslate = (info): void => {
+    PerplexityChannelRequest.apiTranslateByPerplexity(info)
   }
 }
 
